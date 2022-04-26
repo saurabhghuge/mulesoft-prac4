@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7c188b1f-0ad7-405d-8354-0a72bffd773b" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="3aa5f697-177c-4848-b8b7-ab8c9da5578d" file="config.properties" />
+	<flow name="session-4-projFlow" doc:id="46762973-c991-4317-bdb5-9fee5f585918" >
+		<http:listener doc:name="Listener" doc:id="d287e0ae-a893-4bfd-9704-0f9899b4e197" config-ref="HTTP_Listener_config" path="/test"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8397b667-103b-4729-87cf-4e34af157338" message='#["entered in 1st logger"]'/>
+		<flow-ref doc:name="Flow Reference" doc:id="91a68ea5-22ad-4d52-b300-39909a6ec12c" name="session-4-projFlow2"/>
+	</flow>
+	<flow name="session-4-projFlow2" doc:id="42e508ec-c789-41d6-be9c-8f2cba3e9756" >
+		<ee:transform doc:name="Transform Message" doc:id="02da6e71-c73f-4fc7-b949-692a09ae5d25" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var a = [
+    {"name":"Shyam", "email":"shyamjaiswal@gmail.com"},  
+    {"name":"Bob", "email":"bob32@gmail.com"},  
+    {"name":"Jai", "email":"jai87@gmail.com"}  
+    ]
+---
+a map ((item, index) -> {  })]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="session-4-projFlow1" doc:id="8de3abdf-6f50-4fd4-8d55-84820b80356d" >
+		<set-payload value='#["hi " ++ attributes.queryParams.name as String ++ " ur method is " ++ attributes.method]' doc:name="Set Payload" doc:id="9cafcd6d-e456-4d02-a650-b5f165b7956a" />
+	</flow>
+</mule>
